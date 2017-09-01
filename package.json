@@ -1,0 +1,21 @@
+{
+  "name": "niauth",
+  "version": "0.1.0",
+  "description": "NIAuth Client Library",
+  "main": "index.js",
+  "author": "bstreiff",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha -r jsdom-global/register --recursive"
+  },
+  "dependencies": {
+    "jsbn": "0.1.1",
+    "xml-parse-from-string": "1.0.0"
+  },
+  "devDependencies": {
+    "jsdom": "9.5.0",
+    "jsdom-global": "2.1.0",
+    "mocha": "~3.0.2",
+    "mocha-jsdom": "1.1.0"
+  }
+}
