@@ -31,6 +31,13 @@ var primes = [
             g: new BigInteger(Utils.b64tohex(prime.g), 16) };
 });
 
+function hasSessionCookie(name) {
+   return document.cookie.search("_appwebSessionId_") != -1;
+}
+
+function getUserNameFromLoggedInString(str) {
+   return str.match(/Logged in as: (.*)/)[1];
+}
 
 function Permission(xmlNode) {
    this.name = "";
@@ -145,6 +152,50 @@ var updatePermissionsCache = function() {
    });
 }
 
+var _loggedInUser = "";
+
+var getUserName = function() {
+   return _loggedInUser;
+}
+
+/*
+ * This is used to synchronize the client state with the server state;
+ * specifically, if we have a session cookie, we want to figure out if
+ * that cookie is for a valid session.
+ *
+ * @returns {Promise} true if logged in, false if logged out
+ */
+var updateFromSession = function() {
+   if (!hasSessionCookie()) {
+      /* We don't have a session cookie on our end. */
+      return Promise.resolve(false);
+   }
+
+   return fetch('/Login', {
+      credentials: 'same-origin',
+      method: 'GET',
+   }).then(function(response) {
+
+      if (response.status == 200) {
+         /*
+          * The response text is a plain text string:
+          * "Logged in as: username"
+          */
+         return response.text().then(function(str) {
+            _loggedInUser = getUserNameFromLoggedInString(str);
+
+            return true;
+         });
+      } else {
+         /*
+          * For any other error, assume that the session is bad or
+          * expired.
+          */
+         return false;
+      }
+   });
+}
+
 /*
  * Log in to NIAuth.
  *
@@ -155,56 +206,75 @@ var login = function(username, password) {
    srpClient.setIdentity({username:username, password:password});
 
    /*
-    * Issue the initial request; this is expected to return a 403
-    * with an X-NI-AUTH-PARAMS header with information we need to
-    * complete the SRP handshake.
+    * Issue the initial login request.
     */
    return fetch('/Login?username=' + (username || ""), {
-      /* TODO: If we use same-origin, we can get a 200 back if we're already
-       *       logged in. Unfortunately if we're logged in we don't necessarily
-       *       know what user we're logged in as (if this is a fresh page load)
-       *       so at the moment I don't know how to handle that case... */
-      /* credentials: 'same-origin', */
+      credentials: 'same-origin',
       method: 'GET',
    }).then(function(response) {
 
-      if (response.status != 403)
-         throw "Unexpected response ("+response.status+") from NIAuth";
+      if (response.status == 200) {
+         /*
+          * If we get a 200, we have a valid session cookie and we're
+          * already logged in. The response text is a plain text string:
+          * "Logged in as: username"
+          * We need to make sure it matches.
+          */
+         return response.text().then(function(str) {
+            _loggedInUser = getUserNameFromLoggedInString(str);
 
-      /* Obtain the SRP parameters */
-      var serverParams = response.headers.get('X-NI-AUTH-PARAMS');
-      var serverInfo = decodeServerParamsString(serverParams);
+            if (_loggedInUser == username) {
+               /* Excellent. Update permissions. */
+               return fetch('/LVWSAuthSvc/GetAggregateUserPermissions?username=' + (username || ""), {
+                  credentials: 'same-origin',
+                  method: 'GET',
+                  headers: { 'Accept': 'text/xml' },
+               });
+            } else {
+               /* TODO: This can and should be handled by automatically logging out. */
+               throw "Already logged in as " + _loggedInUser + ", log out first!";
+            }
+         });
 
-      /* Generate the client-side parameters */
-      srpClient.setServerInfo(serverInfo);
-      var clientParams = srpClient.generatePublicKeyAndProof();
+      } else if (response.status == 403) {
+         /*
+          * A 403 is "expected" on a fresh login. It's how we obtain the
+          * X-NI-AUTH-PARAMS header containing information for the next
+          * part of the SRP handshake.
+          */
 
-      /* Send the client-side parameters back to the server */
-      var data;
-      data  = "A=" + Utils.makeUrlBase64(Utils.bigIntToBase64(clientParams.clientPublicKey, 128));
-      data += "&M=" + Utils.makeUrlBase64(Utils.hexStringToBase64(clientParams.clientProof));
-      data += "&ss=" + serverInfo.loginToken;
+         /* Obtain the SRP parameters */
+         var serverParams = response.headers.get('X-NI-AUTH-PARAMS');
+         var serverInfo = decodeServerParamsString(serverParams);
 
-      return fetch('/Login', {
-         /* credentials: 'same-origin', */
-         method: 'POST',
-         headers: {
-            "Content-Type": 'application/x-www-form-urlencoded',
-         },
-         body: data,
-      });
+         /* Generate the client-side parameters */
+         srpClient.setServerInfo(serverInfo);
+         var clientParams = srpClient.generatePublicKeyAndProof();
+
+         /* Send the client-side parameters back to the server */
+         var data;
+         data  = "A=" + Utils.makeUrlBase64(Utils.bigIntToBase64(clientParams.clientPublicKey, 128));
+         data += "&M=" + Utils.makeUrlBase64(Utils.hexStringToBase64(clientParams.clientProof));
+         data += "&ss=" + serverInfo.loginToken;
+
+         return fetch('/Login', {
+            credentials: 'same-origin',
+            method: 'POST',
+            headers: {
+               "Content-Type": 'application/x-www-form-urlencoded',
+            },
+            body: data,
+         });
+      } else {
+         throw "Unknown/unhandled status code from NIAuth (" + response.status + ")";
+      }
 
    }).then(function(response) {
       if (response.status == 200) {
          /* Success! The response includes the new permissions set. */
-         loggedInUser = username;
+         _loggedInUser = username;
 
          return response.text().then(function(permText) {
-            /*
-             * Okay, this gets weird. We can either get back a text/xml permissions blob,
-             * or if we're sending our cookie, we can get a text/html response
-             * with the text "Logged in as: admin". We need to handle both???
-             */
             return _parsePermissions(parseXML(permText))
          }).then(function(newPermissions) {
             cachedPermissions = newPermissions;
@@ -223,11 +293,21 @@ var login = function(username, password) {
  * @returns {Promise} will resolve to true if successful
  */
 var logout = function() {
+   if (!hasSessionCookie()) {
+      /*
+       * If we don't have the session cookie, then we don't have a session.
+       * Ergo, we are already logged out.
+       */
+      _loggedInUser = "";
+      return Promise.resolve(true);
+   }
+
    return fetch('/Logout', {
       credentials: 'same-origin',
       method: 'GET',
    }).then(function(response) {
       if (response.status == 200) {
+         _loggedInUser = "";
          return true;
       } else {
          return false;
@@ -245,8 +325,10 @@ var hasPermission = function(permName) {
 }
 
 module.exports = {
+   updateFromSession: updateFromSession,
    getAggregateUserPermissions: getAggregateUserPermissions,
    login: login,
    logout: logout,
    hasPermission: hasPermission,
+   getUserName: getUserName,
 };
