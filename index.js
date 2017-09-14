@@ -217,6 +217,23 @@ var login = function(username, password) {
    })
 }
 
+/*
+ * Logs out of NI Auth. This clears the session.
+ *
+ * @returns {Promise} will resolve to true if successful
+ */
+var logout = function() {
+   return fetch('/Logout', {
+      credentials: 'same-origin',
+      method: 'GET',
+   }).then(function(response) {
+      if (response.status == 200) {
+         return true;
+      } else {
+         return false;
+      }
+   });
+}
 
 /*
  * Does the currently logged-in user have permission for something?
@@ -230,5 +247,6 @@ var hasPermission = function(permName) {
 module.exports = {
    getAggregateUserPermissions: getAggregateUserPermissions,
    login: login,
+   logout: logout,
    hasPermission: hasPermission,
 };
