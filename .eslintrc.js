@@ -17,8 +17,7 @@ module.exports = {
       'semi': 2,
 
       // Use 3-space indentation. Yes, this differs from standard practice.
-      // TODO: comply with this!
-      //'indent': ['error', 3],
+      'indent': ['error', 3],
       'no-tabs': 2,
 
       // Use blocks with all if statements.

@@ -27,8 +27,10 @@ var primes = [
    {n:"5axg064+LI3qRPuYNbgpjlEqoFLpA6VMdJfHs4kJGo74Cl2o4E5JXwkceD26WxT6PzwhHZeqpDbJOgFHZ32OqLibrkDrLnL2pw3GDmoQ6lIPOLgUJjCmkrN35S+dXsFxMzXOLsZwz8JwojmjF+DwnRKCv+Uf49V378xvX7pg4hc=", g:"BQ==" },
    {n:"oOFpUEn0CdvWkCF3heD/etjalOiuis53GgbgIaNbh6JTKiFgs5qN1PuKXBIGhtQ9tmxj+JiZAUMzV5AylidbB1YN/l1DMq/7YZoD1nySkDwF0YS3aJMt+Q4S5PzHuoDazCI//ZzCL8nDG565Aunbgx+kQgr37dsYSdDY8rdOOVc=", g:"BQ==" },
 ].map(function(prime) {
-   return { n: new BigInteger(Utils.b64tohex(prime.n), 16),
-            g: new BigInteger(Utils.b64tohex(prime.g), 16) };
+   return {
+      n: new BigInteger(Utils.b64tohex(prime.n), 16),
+      g: new BigInteger(Utils.b64tohex(prime.g), 16)
+   };
 });
 
 function hasSessionCookie() {
