@@ -3,7 +3,7 @@
  * @copyright National Instruments, 2016-2017
  * @license MIT
  */
-"use strict";
+'use strict';
 
 var Base64 = require('./lib/Base64.js');
 var BigInteger = require('jsbn').BigInteger;
@@ -12,7 +12,7 @@ var Utils = require('./lib/Utils.js');
 var parseXML = require('xml-parse-from-string');
 
 function getText(el) {
-   return (el.textContent || el.innerText || "");
+   return (el.textContent || el.innerText || '');
 }
 
 /*
@@ -21,11 +21,11 @@ function getText(el) {
  * string in order to turn them into BigIntegers.
  */
 var primes = [
-   {n:"ieJUvpnjDnS8CjQLseVMV6+bLPH2bNQLFVj1nVgSrCdErkLGUGhosubcgk6I7XoqM417RFquVMZvqgXMwggvoJyvy003qXK1bukOLlW1cRW6KLCzRBljPsMG6WeNbKqAatVX1MDHtc/d35B4q2ZJ/UXDzFCE2H/MbbJH7yylr2c=", g:"Cw==" },
-   {n:"1XFmKuymyyba31KcEoWXHJco2eqggRxU9/ojMPPAkMaMRGw9WxIgEpfZGsxBOlY/ZciBaFWhbZd6gYK3AEYYEiW1N+noFDjBQyonPk3ZguElv9DgB8bv/bw9+U9o8DK1ScjJkrejEvoP2r9Bn6nANPd52l05digkV68v26fzb0c=", g:"EQ==" },
-   {n:"iJWQ/xNLgaQM8A3XgQ4jmr4yOw4EQ8pcjQ2pJENouY9KfM5kjOGJdiOLnVYZqzDM6bk7wIVCBoO883dnWo4iXVvjsP1EPZ8fs9D2/u1bXtfcq7+ZWgvWGAmaiv9k2SAU8tq4W4ftseMg+CD1qtpGXylIxjWiR4GteZdgbFAS8Mc=", g:"BQ==" },
-   {n:"5axg064+LI3qRPuYNbgpjlEqoFLpA6VMdJfHs4kJGo74Cl2o4E5JXwkceD26WxT6PzwhHZeqpDbJOgFHZ32OqLibrkDrLnL2pw3GDmoQ6lIPOLgUJjCmkrN35S+dXsFxMzXOLsZwz8JwojmjF+DwnRKCv+Uf49V378xvX7pg4hc=", g:"BQ==" },
-   {n:"oOFpUEn0CdvWkCF3heD/etjalOiuis53GgbgIaNbh6JTKiFgs5qN1PuKXBIGhtQ9tmxj+JiZAUMzV5AylidbB1YN/l1DMq/7YZoD1nySkDwF0YS3aJMt+Q4S5PzHuoDazCI//ZzCL8nDG565Aunbgx+kQgr37dsYSdDY8rdOOVc=", g:"BQ==" },
+   {n:'ieJUvpnjDnS8CjQLseVMV6+bLPH2bNQLFVj1nVgSrCdErkLGUGhosubcgk6I7XoqM417RFquVMZvqgXMwggvoJyvy003qXK1bukOLlW1cRW6KLCzRBljPsMG6WeNbKqAatVX1MDHtc/d35B4q2ZJ/UXDzFCE2H/MbbJH7yylr2c=', g:'Cw==' },
+   {n:'1XFmKuymyyba31KcEoWXHJco2eqggRxU9/ojMPPAkMaMRGw9WxIgEpfZGsxBOlY/ZciBaFWhbZd6gYK3AEYYEiW1N+noFDjBQyonPk3ZguElv9DgB8bv/bw9+U9o8DK1ScjJkrejEvoP2r9Bn6nANPd52l05digkV68v26fzb0c=', g:'EQ==' },
+   {n:'iJWQ/xNLgaQM8A3XgQ4jmr4yOw4EQ8pcjQ2pJENouY9KfM5kjOGJdiOLnVYZqzDM6bk7wIVCBoO883dnWo4iXVvjsP1EPZ8fs9D2/u1bXtfcq7+ZWgvWGAmaiv9k2SAU8tq4W4ftseMg+CD1qtpGXylIxjWiR4GteZdgbFAS8Mc=', g:'BQ==' },
+   {n:'5axg064+LI3qRPuYNbgpjlEqoFLpA6VMdJfHs4kJGo74Cl2o4E5JXwkceD26WxT6PzwhHZeqpDbJOgFHZ32OqLibrkDrLnL2pw3GDmoQ6lIPOLgUJjCmkrN35S+dXsFxMzXOLsZwz8JwojmjF+DwnRKCv+Uf49V378xvX7pg4hc=', g:'BQ==' },
+   {n:'oOFpUEn0CdvWkCF3heD/etjalOiuis53GgbgIaNbh6JTKiFgs5qN1PuKXBIGhtQ9tmxj+JiZAUMzV5AylidbB1YN/l1DMq/7YZoD1nySkDwF0YS3aJMt+Q4S5PzHuoDazCI//ZzCL8nDG565Aunbgx+kQgr37dsYSdDY8rdOOVc=', g:'BQ==' },
 ].map(function(prime) {
    return {
       n: new BigInteger(Utils.b64tohex(prime.n), 16),
@@ -34,7 +34,7 @@ var primes = [
 });
 
 function hasSessionCookie() {
-   return document.cookie.search("_appwebSessionId_") != -1;
+   return document.cookie.search('_appwebSessionId_') != -1;
 }
 
 function getUserNameFromLoggedInString(str) {
@@ -42,17 +42,17 @@ function getUserNameFromLoggedInString(str) {
 }
 
 function Permission(xmlNode) {
-   this.name = "";
+   this.name = '';
    this.builtin = false;
    this.id = -1;
 
    for (var cn = 0; cn < xmlNode.childNodes.length; ++cn) {
       var cnode = xmlNode.childNodes[cn];
-      if (cnode.tagName == "Name")
+      if (cnode.tagName == 'Name')
          this.name = getText(cnode);
-      else if (cnode.tagName == "BuiltIn")
+      else if (cnode.tagName == 'BuiltIn')
          this.builtin = !!(getText(cnode));
-      else if (cnode.tagName == "ID")
+      else if (cnode.tagName == 'ID')
          this.id = parseInt(getText(cnode));
    }
 }
@@ -60,13 +60,13 @@ function Permission(xmlNode) {
 var _parsePermissions = function(xmlData) {
    var permissions = {};
    var root = xmlData.documentElement;
-   if (root.tagName != "Permissions") {
-      throw "Unknown element type, got " + root.tagName;
+   if (root.tagName != 'Permissions') {
+      throw 'Unknown element type, got ' + root.tagName;
    }
 
    for (var cn = 0; cn < root.childNodes.length; ++cn) {
       var cnode = root.childNodes[cn];
-      if (cnode.tagName == "Permission") {
+      if (cnode.tagName == 'Permission') {
          var p = new Permission(cnode);
          permissions[p.name] = p;
       }
@@ -79,7 +79,7 @@ var _parsePermissions = function(xmlData) {
  * Retrieve the user permissions for a user.
  */
 var getAggregateUserPermissions = function(username) {
-   return fetch('/LVWSAuthSvc/GetAggregateUserPermissions?username=' + (username || ""), {
+   return fetch('/LVWSAuthSvc/GetAggregateUserPermissions?username=' + (username || ''), {
       credentials: 'same-origin',
       method: 'GET',
       headers: { 'Accept': 'text/xml' },
@@ -91,7 +91,7 @@ var getAggregateUserPermissions = function(username) {
 };
 
 var srpClient = new SRP.Client();
-var loggedInUser = "";
+var loggedInUser = '';
 var cachedPermissions = undefined;
 
 /*
@@ -104,7 +104,7 @@ var splitParamsString = function(str) {
    for (var i = 0; i < params.length; ++i) {
       var equals = params[i].indexOf('=');
       if (equals == -1)
-         throw "not a valid params string";
+         throw 'not a valid params string';
 
       var name = params[i].substr(0, equals);
       var value = params[i].substr(equals+1);
@@ -127,7 +127,7 @@ var decodeServerParamsString = function(str) {
        !params.hasOwnProperty('s') ||
        !params.hasOwnProperty('B') ||
        !params.hasOwnProperty('ss')) {
-      throw "didn't get everything we needed from server";
+      throw 'didn\'t get everything we needed from server';
    }
 
    params.N = parseInt(params.N, 10);
@@ -135,7 +135,7 @@ var decodeServerParamsString = function(str) {
    params.B = new BigInteger(Utils.b64tohex(params.B), 16);
 
    if (params.N > primes.length)
-      throw "invalid prime index";
+      throw 'invalid prime index';
 
    return {
       modulus:primes[params.N].n,
@@ -155,7 +155,7 @@ var updatePermissionsCache = function() {
    });
 };
 
-var _loggedInUser = "";
+var _loggedInUser = '';
 
 var getUserName = function() {
    return _loggedInUser;
@@ -211,7 +211,7 @@ var login = function(username, password) {
    /*
     * Issue the initial login request.
     */
-   return fetch('/Login?username=' + (username || ""), {
+   return fetch('/Login?username=' + (username || ''), {
       credentials: 'same-origin',
       method: 'GET',
    }).then(function(response) {
@@ -228,14 +228,14 @@ var login = function(username, password) {
 
             if (_loggedInUser == username) {
                /* Excellent. Update permissions. */
-               return fetch('/LVWSAuthSvc/GetAggregateUserPermissions?username=' + (username || ""), {
+               return fetch('/LVWSAuthSvc/GetAggregateUserPermissions?username=' + (username || ''), {
                   credentials: 'same-origin',
                   method: 'GET',
                   headers: { 'Accept': 'text/xml' },
                });
             } else {
                /* TODO: This can and should be handled by automatically logging out. */
-               throw "Already logged in as " + _loggedInUser + ", log out first!";
+               throw 'Already logged in as ' + _loggedInUser + ', log out first!';
             }
          });
 
@@ -256,20 +256,20 @@ var login = function(username, password) {
 
          /* Send the client-side parameters back to the server */
          var data;
-         data  = "A=" + Utils.makeUrlBase64(Utils.bigIntToBase64(clientParams.clientPublicKey, 128));
-         data += "&M=" + Utils.makeUrlBase64(Utils.hexStringToBase64(clientParams.clientProof));
-         data += "&ss=" + serverInfo.loginToken;
+         data  = 'A=' + Utils.makeUrlBase64(Utils.bigIntToBase64(clientParams.clientPublicKey, 128));
+         data += '&M=' + Utils.makeUrlBase64(Utils.hexStringToBase64(clientParams.clientProof));
+         data += '&ss=' + serverInfo.loginToken;
 
          return fetch('/Login', {
             credentials: 'same-origin',
             method: 'POST',
             headers: {
-               "Content-Type": 'application/x-www-form-urlencoded',
+               'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: data,
          });
       } else {
-         throw "Unknown/unhandled status code from NIAuth (" + response.status + ")";
+         throw 'Unknown/unhandled status code from NIAuth (' + response.status + ')';
       }
 
    }).then(function(response) {
@@ -285,7 +285,7 @@ var login = function(username, password) {
          });
       } else if (response.status == 403) {
          /* Authentication failed. */
-         throw "Login failed!";
+         throw 'Login failed!';
       }
    });
 };
@@ -301,7 +301,7 @@ var logout = function() {
        * If we don't have the session cookie, then we don't have a session.
        * Ergo, we are already logged out.
        */
-      _loggedInUser = "";
+      _loggedInUser = '';
       return Promise.resolve(true);
    }
 
@@ -310,7 +310,7 @@ var logout = function() {
       method: 'GET',
    }).then(function(response) {
       if (response.status == 200) {
-         _loggedInUser = "";
+         _loggedInUser = '';
          return true;
       } else {
          return false;

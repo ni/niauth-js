@@ -25,8 +25,7 @@ module.exports = {
       //'curly': ['error', 'all'],
 
       // Use single quotes for string literal notation.
-      // TODO: comply with this!
-      //'quotes': ['error', 'single'],
+      'quotes': ['error', 'single'],
 
       // For ... in statements should check hasOwnProperty for each property.
       'guard-for-in': 2,
