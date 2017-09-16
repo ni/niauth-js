@@ -10,6 +10,7 @@
      "url": "https://github.com/ni/niauth-js.git"
   },
   "scripts": {
+    "lint": "eslint index.js lib/; exit 0",
     "test": "mocha -r jsdom-global/register --recursive"
   },
   "dependencies": {
@@ -17,6 +18,7 @@
     "xml-parse-from-string": "1.0.0"
   },
   "devDependencies": {
+    "eslint": "4.7.0",
     "jsdom": "9.5.0",
     "jsdom-global": "2.1.0",
     "mocha": "~3.0.2",

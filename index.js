@@ -31,7 +31,7 @@ var primes = [
             g: new BigInteger(Utils.b64tohex(prime.g), 16) };
 });
 
-function hasSessionCookie(name) {
+function hasSessionCookie() {
    return document.cookie.search("_appwebSessionId_") != -1;
 }
 
@@ -145,6 +145,7 @@ var decodeServerParamsString = function(str) {
    };
 }
 
+// eslint-disable-next-line no-unused-vars
 var updatePermissionsCache = function() {
    return getAggregateUserPermissions(loggedInUser).then(function(permissions) {
       cachedPermissions = permissions;
