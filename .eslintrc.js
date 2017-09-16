@@ -14,8 +14,7 @@ module.exports = {
       'camelcase': [2, {properties: 'never'}],
 
       // End all statements with a semicolon.
-      // TODO: comply with this!
-      //'semi': 2,
+      'semi': 2,
 
       // Use 3-space indentation. Yes, this differs from standard practice.
       // TODO: comply with this!

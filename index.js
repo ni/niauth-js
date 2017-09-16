@@ -71,7 +71,7 @@ var _parsePermissions = function(xmlData) {
    }
 
    return permissions;
-}
+};
 
 /*
  * Retrieve the user permissions for a user.
@@ -86,7 +86,7 @@ var getAggregateUserPermissions = function(username) {
    }).then(function(text) {
       return _parsePermissions(parseXML(text));
    });
-}
+};
 
 var srpClient = new SRP.Client();
 var loggedInUser = "";
@@ -110,7 +110,7 @@ var splitParamsString = function(str) {
       ret[name] = value;
    }
    return ret;
-}
+};
 
 /*
  * Decode the SRP parameters from the server.
@@ -143,7 +143,7 @@ var decodeServerParamsString = function(str) {
       // We don't need to operate on the login token, so leave as string.
       loginToken:params.ss
    };
-}
+};
 
 // eslint-disable-next-line no-unused-vars
 var updatePermissionsCache = function() {
@@ -151,13 +151,13 @@ var updatePermissionsCache = function() {
       cachedPermissions = permissions;
       return true;
    });
-}
+};
 
 var _loggedInUser = "";
 
 var getUserName = function() {
    return _loggedInUser;
-}
+};
 
 /*
  * This is used to synchronize the client state with the server state;
@@ -195,7 +195,7 @@ var updateFromSession = function() {
          return false;
       }
    });
-}
+};
 
 /*
  * Log in to NIAuth.
@@ -276,7 +276,7 @@ var login = function(username, password) {
          _loggedInUser = username;
 
          return response.text().then(function(permText) {
-            return _parsePermissions(parseXML(permText))
+            return _parsePermissions(parseXML(permText));
          }).then(function(newPermissions) {
             cachedPermissions = newPermissions;
             return true;
@@ -285,8 +285,8 @@ var login = function(username, password) {
          /* Authentication failed. */
          throw "Login failed!";
       }
-   })
-}
+   });
+};
 
 /*
  * Logs out of NI Auth. This clears the session.
@@ -314,7 +314,7 @@ var logout = function() {
          return false;
       }
    });
-}
+};
 
 /*
  * Does the currently logged-in user have permission for something?
@@ -323,7 +323,7 @@ var hasPermission = function(permName) {
    if (cachedPermissions == undefined)
       return false;
    return cachedPermissions.hasOwnProperty(permName);
-}
+};
 
 module.exports = {
    updateFromSession: updateFromSession,
