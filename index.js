@@ -11,9 +11,9 @@ var SRP = require('./lib/SRP.js');
 var Utils = require('./lib/Utils.js');
 var parseXML = require('xml-parse-from-string');
 
-function getText(el) {
+var getText = function(el) {
    return (el.textContent || el.innerText || '');
-}
+};
 
 /*
  * These are the 1024-bit primes and generators. We store them
@@ -33,15 +33,15 @@ var primes = [
    };
 });
 
-function hasSessionCookie() {
+var hasSessionCookie = function() {
    return document.cookie.search('_appwebSessionId_') != -1;
-}
+};
 
-function getUserNameFromLoggedInString(str) {
+var getUserNameFromLoggedInString = function(str) {
    return str.match(/Logged in as: (.*)/)[1];
-}
+};
 
-function Permission(xmlNode) {
+var Permission = function(xmlNode) {
    this.name = '';
    this.builtin = false;
    this.id = -1;
@@ -55,7 +55,7 @@ function Permission(xmlNode) {
       else if (cnode.tagName == 'ID')
          this.id = parseInt(getText(cnode));
    }
-}
+};
 
 var _parsePermissions = function(xmlData) {
    var permissions = {};

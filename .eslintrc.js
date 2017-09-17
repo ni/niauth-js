@@ -52,8 +52,7 @@ module.exports = {
       'no-redeclare': 2,
 
       // Use variable assignment function expressions to define functions.
-      // TODO: comply with this!
-      //'func-style': ['error', 'expression'],
+      'func-style': ['error', 'expression'],
 
       // Do not use reserved keywords for variable names.
       'no-shadow-restricted-names': 2,
