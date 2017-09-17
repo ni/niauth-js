@@ -85,7 +85,6 @@ module.exports = {
       'no-multiple-empty-lines': [2, {max: 2}],
       'no-trailing-spaces': 2,
       'no-alert': 2,
-      // TODO: comply with this!
-      //'no-param-reassign': 2,
+      'no-param-reassign': 2,
    }
 };
