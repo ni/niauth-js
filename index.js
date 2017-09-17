@@ -48,12 +48,13 @@ var Permission = function(xmlNode) {
 
    for (var cn = 0; cn < xmlNode.childNodes.length; ++cn) {
       var cnode = xmlNode.childNodes[cn];
-      if (cnode.tagName == 'Name')
+      if (cnode.tagName == 'Name') {
          this.name = getText(cnode);
-      else if (cnode.tagName == 'BuiltIn')
+      } else if (cnode.tagName == 'BuiltIn') {
          this.builtin = !!(getText(cnode));
-      else if (cnode.tagName == 'ID')
+      } else if (cnode.tagName == 'ID') {
          this.id = parseInt(getText(cnode));
+      }
    }
 };
 
@@ -103,8 +104,9 @@ var splitParamsString = function(str) {
    var params = str.split(',');
    for (var i = 0; i < params.length; ++i) {
       var equals = params[i].indexOf('=');
-      if (equals == -1)
+      if (equals == -1) {
          throw 'not a valid params string';
+      }
 
       var name = params[i].substr(0, equals);
       var value = params[i].substr(equals+1);
@@ -119,8 +121,9 @@ var splitParamsString = function(str) {
  */
 var decodeServerParamsString = function(str) {
    var srpParams = str;
-   if (!srpParams)
+   if (!srpParams) {
       return {};
+   }
 
    var params = splitParamsString(str);
    if (!params.hasOwnProperty('N') ||
@@ -134,8 +137,9 @@ var decodeServerParamsString = function(str) {
    params.s = Base64.decode(params.s);
    params.B = new BigInteger(Utils.b64tohex(params.B), 16);
 
-   if (params.N > primes.length)
+   if (params.N > primes.length) {
       throw 'invalid prime index';
+   }
 
    return {
       modulus:primes[params.N].n,
@@ -322,8 +326,9 @@ var logout = function() {
  * Does the currently logged-in user have permission for something?
  */
 var hasPermission = function(permName) {
-   if (cachedPermissions == undefined)
+   if (cachedPermissions == undefined) {
       return false;
+   }
    return cachedPermissions.hasOwnProperty(permName);
 };
 

@@ -21,8 +21,7 @@ module.exports = {
       'no-tabs': 2,
 
       // Use blocks with all if statements.
-      // TODO: comply with this!
-      //'curly': ['error', 'all'],
+      'curly': ['error', 'all'],
 
       // Use single quotes for string literal notation.
       'quotes': ['error', 'single'],
