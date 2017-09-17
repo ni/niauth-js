@@ -34,8 +34,7 @@ module.exports = {
       'no-fallthrough': 2,
 
       // Use strict equality operators (e.g., === and !==)
-      // TODO: comply with this!
-      //'eqeqeq': 2,
+      'eqeqeq': 2,
 
       // Use literals like '{}' instead of the new operator for primitives.
       'no-new': 2,

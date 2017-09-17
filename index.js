@@ -34,7 +34,7 @@ var primes = [
 });
 
 var hasSessionCookie = function() {
-   return document.cookie.search('_appwebSessionId_') != -1;
+   return document.cookie.search('_appwebSessionId_') !== -1;
 };
 
 var getUserNameFromLoggedInString = function(str) {
@@ -48,11 +48,11 @@ var Permission = function(xmlNode) {
 
    for (var cn = 0; cn < xmlNode.childNodes.length; ++cn) {
       var cnode = xmlNode.childNodes[cn];
-      if (cnode.tagName == 'Name') {
+      if (cnode.tagName === 'Name') {
          this.name = getText(cnode);
-      } else if (cnode.tagName == 'BuiltIn') {
+      } else if (cnode.tagName === 'BuiltIn') {
          this.builtin = !!(getText(cnode));
-      } else if (cnode.tagName == 'ID') {
+      } else if (cnode.tagName === 'ID') {
          this.id = parseInt(getText(cnode));
       }
    }
@@ -61,13 +61,13 @@ var Permission = function(xmlNode) {
 var _parsePermissions = function(xmlData) {
    var permissions = {};
    var root = xmlData.documentElement;
-   if (root.tagName != 'Permissions') {
+   if (root.tagName !== 'Permissions') {
       throw 'Unknown element type, got ' + root.tagName;
    }
 
    for (var cn = 0; cn < root.childNodes.length; ++cn) {
       var cnode = root.childNodes[cn];
-      if (cnode.tagName == 'Permission') {
+      if (cnode.tagName === 'Permission') {
          var p = new Permission(cnode);
          permissions[p.name] = p;
       }
@@ -104,7 +104,7 @@ var splitParamsString = function(str) {
    var params = str.split(',');
    for (var i = 0; i < params.length; ++i) {
       var equals = params[i].indexOf('=');
-      if (equals == -1) {
+      if (equals === -1) {
          throw 'not a valid params string';
       }
 
@@ -183,7 +183,7 @@ var updateFromSession = function() {
       method: 'GET',
    }).then(function(response) {
 
-      if (response.status == 200) {
+      if (response.status === 200) {
          /*
           * The response text is a plain text string:
           * "Logged in as: username"
@@ -220,7 +220,7 @@ var login = function(username, password) {
       method: 'GET',
    }).then(function(response) {
 
-      if (response.status == 200) {
+      if (response.status === 200) {
          /*
           * If we get a 200, we have a valid session cookie and we're
           * already logged in. The response text is a plain text string:
@@ -230,7 +230,7 @@ var login = function(username, password) {
          return response.text().then(function(str) {
             _loggedInUser = getUserNameFromLoggedInString(str);
 
-            if (_loggedInUser == username) {
+            if (_loggedInUser === username) {
                /* Excellent. Update permissions. */
                return fetch('/LVWSAuthSvc/GetAggregateUserPermissions?username=' + (username || ''), {
                   credentials: 'same-origin',
@@ -243,7 +243,7 @@ var login = function(username, password) {
             }
          });
 
-      } else if (response.status == 403) {
+      } else if (response.status === 403) {
          /*
           * A 403 is "expected" on a fresh login. It's how we obtain the
           * X-NI-AUTH-PARAMS header containing information for the next
@@ -277,7 +277,7 @@ var login = function(username, password) {
       }
 
    }).then(function(response) {
-      if (response.status == 200) {
+      if (response.status === 200) {
          /* Success! The response includes the new permissions set. */
          _loggedInUser = username;
 
@@ -287,7 +287,7 @@ var login = function(username, password) {
             cachedPermissions = newPermissions;
             return true;
          });
-      } else if (response.status == 403) {
+      } else if (response.status === 403) {
          /* Authentication failed. */
          throw 'Login failed!';
       }
@@ -313,7 +313,7 @@ var logout = function() {
       credentials: 'same-origin',
       method: 'GET',
    }).then(function(response) {
-      if (response.status == 200) {
+      if (response.status === 200) {
          _loggedInUser = '';
          return true;
       } else {
@@ -326,7 +326,7 @@ var logout = function() {
  * Does the currently logged-in user have permission for something?
  */
 var hasPermission = function(permName) {
-   if (cachedPermissions == undefined) {
+   if (cachedPermissions === undefined) {
       return false;
    }
    return cachedPermissions.hasOwnProperty(permName);
